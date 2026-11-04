@@ -7,4 +7,5 @@ abstract final class ValidationRules {
   static const int commentMaxLength = 500;
   static const int commentCounterThreshold = 400;
   static const int signUpPasswordMinLength = 8;
+  static final RegExp emailPattern = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
 }
