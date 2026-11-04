@@ -73,7 +73,7 @@ Le même fichier initialise le SDK : adresse `http://<hôte>:1337/parse`, adress
 | Tests de widgets | Fait : fil, détail, création et suppression, parcours de connexion. |
 | Modifier son article | Pas fait. |
 | Supprimer son commentaire | Pas fait. |
-| Commentaires en temps réel (LiveQuery) | Pas fait (l'adresse LiveQuery est déjà configurée). |
+| Commentaires en temps réel (LiveQuery) | Fait : dans le détail, un commentaire ajouté ou supprimé par un autre utilisateur apparaît ou disparaît sans action, compteur compris. Pas de doublon avec son propre commentaire. Abonnement coupé à la fermeture de l'écran. |
 
 ## Choix techniques
 
@@ -90,6 +90,7 @@ Le même fichier initialise le SDK : adresse `http://<hôte>:1337/parse`, adress
 - **Injection** : `RepositoryProvider` et `BlocProvider` construits dans `lib/app.dart`, sans singleton global hors du SDK Parse. Les tests remplacent les providers par des faux.
 - **Session persistante** : stockage `CoreStoreSharedPreferences`, session vérifiée au démarrage auprès du serveur.
 - **Likes** : la fonction serveur `toggleLike` bascule le like ; une requête `Like` filtrée sur l'utilisateur courant et les articles affichés (`whereContainedIn`) indique ce que j'ai liké.
+- **Temps réel** : le provider des commentaires s'abonne avec `LiveQuery().client.subscribe` aux commentaires de l'article (événements création et suppression) et expose un `Stream`. Le cubit du détail l'écoute, ignore un commentaire déjà affiché (même `objectId`) et coupe l'abonnement (`unSubscribe`) à sa fermeture.
 - **Dates** : `intl`, affichage relatif en français.
 
 ## Tests
@@ -103,7 +104,6 @@ Les tests couvrent les cubits, le dépôt d'authentification, la traduction des 
 ## Améliorations possibles
 
 - Modifier son article et supprimer son commentaire.
-- Commentaires en temps réel avec LiveQuery.
 - Pagination des commentaires au-delà de 100.
 - Cache local pour consulter le fil hors ligne.
 - Tests d'intégration contre le serveur fourni.
