@@ -183,7 +183,10 @@ class _FeedList extends StatelessWidget {
                     key: ValueKey(post.id),
                     child: PostCard(
                       post: post,
-                      onTap: () => context.push(AppRoutes.postDetail(post.id)),
+                      onTap: () => context.push(
+                        AppRoutes.postDetail(post.id),
+                        extra: post,
+                      ),
                     ),
                   );
                 },

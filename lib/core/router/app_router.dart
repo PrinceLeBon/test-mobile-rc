@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../data/models/post.dart';
 import '../../features/auth/view/login_page.dart';
 import '../../features/auth/view/register_page.dart';
 import '../../features/feed/view/feed_page.dart';
@@ -40,9 +41,13 @@ abstract final class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.postDetailPattern,
-          builder: (context, state) => PostDetailPage(
-            postId: state.pathParameters[AppRoutes.postIdParameter] ?? '',
-          ),
+          builder: (context, state) {
+            final extra = state.extra;
+            return PostDetailPage(
+              postId: state.pathParameters[AppRoutes.postIdParameter] ?? '',
+              initialPost: extra is Post ? extra : null,
+            );
+          },
         ),
       ],
     );
