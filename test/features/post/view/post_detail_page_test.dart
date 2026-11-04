@@ -1,5 +1,7 @@
 import 'package:blog_app/app.dart';
 import 'package:blog_app/core/constants/validation_rules.dart';
+import 'package:blog_app/data/models/comment.dart';
+import 'package:blog_app/data/models/comment_event.dart';
 import 'package:blog_app/data/repositories/auth_repository.dart';
 import 'package:blog_app/data/repositories/comment_repository.dart';
 import 'package:blog_app/data/repositories/post_repository.dart';
@@ -80,6 +82,39 @@ void main() {
 
       expect(commentCountChip(post.commentsCount + 1), findsOneWidget);
       expect(postProvider.fetchPageCalls, hasLength(1));
+    },
+  );
+
+  testWidgets(
+    'un commentaire reçu en direct apparaît et l’abonnement s’arrête au retour',
+    (tester) async {
+      final (_, commentProvider) = await openDetailSignedIn(tester);
+
+      expect(commentProvider.watchCalls, [post.id]);
+      expect(commentProvider.hasLiveListener, isTrue);
+
+      commentProvider.emitLive(
+        CommentAdded(
+          Comment(
+            id: 'live-1',
+            postId: post.id,
+            text: 'Arrivé en direct',
+            authorId: 'u3',
+            authorName: 'carol',
+            createdAt: DateTime.utc(2026, 11, 4, 2),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Arrivé en direct'), findsOneWidget);
+      expect(commentCountChip(post.commentsCount + 1), findsOneWidget);
+
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+
+      expect(commentProvider.hasLiveListener, isFalse);
+      expect(commentCountChip(post.commentsCount + 1), findsOneWidget);
     },
   );
 

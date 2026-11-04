@@ -37,11 +37,13 @@ class PostDetailPage extends StatelessWidget {
           ], reloadPersonalLikes: true);
         }
         return PostDetailCubit(
-          postRepository: context.read<PostRepository>(),
-          commentRepository: context.read<CommentRepository>(),
-          postId: postId,
-          initialPost: initialPost,
-        )..load();
+            postRepository: context.read<PostRepository>(),
+            commentRepository: context.read<CommentRepository>(),
+            postId: postId,
+            initialPost: initialPost,
+          )
+          ..load()
+          ..watchComments();
       },
       child: const PostDetailView(),
     );
