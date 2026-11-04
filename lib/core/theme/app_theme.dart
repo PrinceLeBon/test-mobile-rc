@@ -218,6 +218,11 @@ abstract final class AppTheme {
         space: 1,
       ),
       iconTheme: IconThemeData(color: scheme.onSurfaceVariant),
+      actionIconTheme: ActionIconThemeData(
+        backButtonIconBuilder: (context) =>
+            const Icon(Icons.arrow_back_rounded),
+        closeButtonIconBuilder: (context) => const Icon(Icons.close_rounded),
+      ),
     );
   }
 }

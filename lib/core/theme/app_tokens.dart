@@ -59,6 +59,7 @@ abstract final class AppSizes {
   static const double logo = 32;
   static const double logoDot = 10;
   static const double logoRadius = 10;
+  static const double authGradientHeight = 320;
   static const double sheetHandleWidth = 36;
   static const double sheetHandleHeight = 4;
   static const double avatarComment = 32;
