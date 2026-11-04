@@ -1,11 +1,13 @@
 import 'package:blog_app/app.dart';
 import 'package:blog_app/data/repositories/auth_repository.dart';
+import 'package:blog_app/data/repositories/comment_repository.dart';
 import 'package:blog_app/data/repositories/post_repository.dart';
 import 'package:blog_app/features/auth/view/login_page.dart';
 import 'package:blog_app/features/feed/view/feed_body.dart';
 import 'package:blog_app/features/feed/view/post_card.dart';
 import 'package:blog_app/features/feed/view/write_post_button.dart';
 import 'package:blog_app/features/post/view/post_detail_page.dart';
+import 'package:blog_app/features/post/view/post_detail_texts.dart';
 import 'package:blog_app/shared/widgets/platform_tag.dart';
 import 'package:blog_app/shared/widgets/post_stat_chip.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 import '../../../helpers/fake_auth_provider.dart';
+import '../../../helpers/fake_comment_provider.dart';
 import '../../../helpers/fake_post_provider.dart';
 
 void main() {
@@ -36,6 +39,9 @@ void main() {
       BlogApp(
         authRepository: AuthRepository(FakeAuthProvider()),
         postRepository: PostRepository(provider),
+        commentRepository: CommentRepository(
+          FakeCommentProvider(comments: [sampleComment(1, postId: 'post-4')]),
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -118,6 +124,10 @@ void main() {
 
     final detail = tester.widget<PostDetailPage>(find.byType(PostDetailPage));
     expect(detail.postId, 'post-4');
+    expect(detail.initialPost, samplePost(4));
+    expect(find.text(samplePost(4).body), findsOneWidget);
+    expect(find.text('Commentaire 1'), findsOneWidget);
+    expect(find.text(PostDetailTexts.visitorInvite), findsOneWidget);
   });
 
   testWidgets('le bouton Écrire envoie le visiteur vers la connexion', (

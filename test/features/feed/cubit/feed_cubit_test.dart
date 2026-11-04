@@ -170,6 +170,33 @@ void main() {
       expect(cubit.state.isLoadingMore, isFalse);
     },
   );
+
+  test(
+    'replacePost met à jour la carte du même article sans recharger',
+    () async {
+      await cubit.loadInitial();
+      final updatedPost = samplePost(3).copyWith(commentsCount: 42);
+
+      cubit.replacePost(updatedPost);
+
+      expect(cubit.state.posts[3], updatedPost);
+      expect(cubit.state.posts.length, 10);
+      expect(
+        cubit.state.posts.where((post) => post != updatedPost),
+        samplePosts(10).where((post) => post.id != updatedPost.id),
+      );
+      expect(provider.fetchPageCalls.length, 1);
+    },
+  );
+
+  test('replacePost ignore un article absent du fil', () async {
+    await cubit.loadInitial();
+    final stateBefore = cubit.state;
+
+    cubit.replacePost(samplePost(40));
+
+    expect(cubit.state, same(stateBefore));
+  });
 }
 
 class UnexpectedError implements Exception {
