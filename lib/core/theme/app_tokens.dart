@@ -120,7 +120,7 @@ abstract final class AppDurations {
 }
 
 abstract final class AppCurves {
-  static const Curve like = Curves.easeOutBack;
+  static const Curve like = Curves.easeOut;
   static const Curve likeColor = Curves.easeOut;
   static const Curve appear = Curves.easeOutCubic;
   static const Curve newCommentHighlight = Curves.easeOut;
