@@ -45,6 +45,17 @@ Le fichier `lib/core/config/parse_config.dart` construit l'adresse du serveur :
   flutter run --dart-define=PARSE_HOST=192.168.1.20
   ```
 
+  Le téléphone et l'ordinateur doivent alors être sur le même réseau Wi-Fi.
+
+- téléphone Android physique branché en USB (méthode la plus fiable, indépendante du Wi-Fi) : rediriger le port du téléphone vers l'ordinateur, puis viser `localhost` :
+
+  ```bash
+  adb reverse tcp:1337 tcp:1337
+  flutter run --dart-define=PARSE_HOST=localhost
+  ```
+
+  La redirection est à refaire après un débranchement ou un redémarrage du téléphone.
+
 Le même fichier initialise le SDK : adresse `http://<hôte>:1337/parse`, adresse LiveQuery `ws://<hôte>:1337/parse`, envoi automatique du jeton de session et stockage persistant (`CoreStoreSharedPreferences`) pour garder la session après un redémarrage.
 
 ## Comptes de test
@@ -59,7 +70,7 @@ Le même fichier initialise le SDK : adresse `http://<hôte>:1337/parse`, adress
 
 | N° | Fonction | État |
 |---|---|---|
-| F1 | Authentification | Fait : inscription, connexion, déconnexion, session conservée au redémarrage, erreurs du serveur affichées en français. |
+| F1 | Authentification | Fait : inscription, connexion, déconnexion, session conservée au redémarrage, erreurs du serveur affichées (en français, sauf l'erreur de validation 142 : voir « Limites connues »). |
 | F2 | Fil | Fait : plus récents d'abord, 10 par page, défilement infini, tirer pour rafraîchir. Titre, auteur, date, extrait, likes, commentaires. |
 | F3 | Détail | Fait : article complet et commentaires du plus ancien au plus récent (auteur, date, texte), jusqu'à 100 commentaires. |
 | F4 | Écriture | Fait : création si connecté avec la même validation que le serveur (titre 3 à 120, contenu 1 à 5000, texte nettoyé). Suppression par l'auteur avec boîte de confirmation. |
@@ -101,9 +112,17 @@ flutter test
 
 Les tests couvrent les cubits, le dépôt d'authentification, la traduction des erreurs Parse, le format des dates et les écrans principaux (tests de widgets avec des providers simulés, sans serveur).
 
+## Limites connues
+
+- L'erreur de validation du serveur (code 142) est affichée avec le message du serveur, en anglais. Elle reste rare : l'application applique les mêmes règles avant l'envoi et bloque les saisies invalides.
+- Le détail affiche au plus 100 commentaires, sans pagination.
+- La page d'erreur de navigation (adresse inconnue) est celle par défaut de `go_router`, en anglais.
+- Si la requête des likes personnels échoue, les cœurs restent vides jusqu'au prochain chargement, sans message.
+
 ## Améliorations possibles
 
 - Modifier son article et supprimer son commentaire.
+- Messages d'erreur de validation traduits en français, champ par champ.
 - Pagination des commentaires au-delà de 100.
 - Cache local pour consulter le fil hors ligne.
 - Tests d'intégration contre le serveur fourni.
