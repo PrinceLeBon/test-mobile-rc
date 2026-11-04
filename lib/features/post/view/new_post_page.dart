@@ -67,7 +67,11 @@ class _NewPostViewState extends State<NewPostView> {
   }
 
   Future<void> _requireSignedIn() async {
-    if (!mounted || context.read<AuthCubit>().state is AuthAuthenticated) {
+    final authCubit = context.read<AuthCubit>();
+    final authState = authCubit.state is AuthUnknown
+        ? await authCubit.stream.firstWhere((state) => state is! AuthUnknown)
+        : authCubit.state;
+    if (!mounted || authState is AuthAuthenticated) {
       return;
     }
     final signedIn = await context.openLogin();
