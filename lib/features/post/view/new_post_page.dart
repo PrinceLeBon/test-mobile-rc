@@ -132,9 +132,7 @@ class _NewPostViewState extends State<NewPostView> {
                 leading: IconButton(
                   tooltip: NewPostPage.closeTooltip,
                   icon: const Icon(Icons.close_rounded),
-                  onPressed: state.isSubmitting
-                      ? null
-                      : _close,
+                  onPressed: state.isSubmitting ? null : _close,
                 ),
               ),
               body: Column(
