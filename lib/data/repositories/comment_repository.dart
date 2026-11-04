@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart' show Either, Left, Right;
 import '../../core/error/failure.dart';
 import '../../core/error/parse_failure_mapper.dart';
 import '../models/comment.dart';
+import '../models/comment_event.dart';
 import '../providers/comment_provider.dart';
 
 class CommentRepository {
@@ -23,6 +24,10 @@ class CommentRepository {
     required String text,
   }) {
     return _run(() => _provider.create(postId: postId, text: text));
+  }
+
+  Stream<CommentEvent> watchForPost(String postId) {
+    return _provider.watchForPost(postId).handleError((Object _) {});
   }
 
   Future<Either<Failure, T>> _run<T>(Future<T> Function() action) async {

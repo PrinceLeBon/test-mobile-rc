@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:blog_app/core/constants/validation_rules.dart';
 import 'package:blog_app/core/error/failure.dart';
 import 'package:blog_app/data/models/comment.dart';
+import 'package:blog_app/data/models/comment_event.dart';
 import 'package:blog_app/data/models/post.dart';
 import 'package:blog_app/data/repositories/comment_repository.dart';
 import 'package:blog_app/data/repositories/post_repository.dart';
@@ -192,6 +193,128 @@ void main() {
       expect(cubit.state.post?.commentsCount, freshPost.commentsCount);
       expect(cubit.state.sendFailure, const ValidationFailure('text too long'));
       expect(cubit.state.isSendingComment, isFalse);
+    });
+  });
+
+  group('commentaires en temps réel', () {
+    Comment incomingComment(String id, {String? postId}) {
+      return Comment(
+        id: id,
+        postId: postId ?? displayedPost.id,
+        text: 'Arrivé en direct',
+        authorId: 'u3',
+        authorName: 'carol',
+        createdAt: DateTime.utc(2026, 11, 4, 2),
+      );
+    }
+
+    Future<void> deliverLiveEvents() => Future<void>.delayed(Duration.zero);
+
+    Future<PostDetailCubit> watchingCubit() async {
+      final cubit = await loadedCubit();
+      cubit.watchComments();
+      return cubit;
+    }
+
+    test(
+      'un commentaire d’un autre utilisateur s’ajoute sans action',
+      () async {
+        final cubit = await watchingCubit();
+
+        commentProvider.emitLive(CommentAdded(incomingComment('live-1')));
+        await deliverLiveEvents();
+
+        expect(commentProvider.watchCalls, [displayedPost.id]);
+        expect(cubit.state.comments.map((comment) => comment.id), [
+          ...storedComments.map((comment) => comment.id),
+          'live-1',
+        ]);
+        expect(cubit.state.post?.commentsCount, freshPost.commentsCount + 1);
+      },
+    );
+
+    test(
+      'l’événement de mon propre commentaire ne crée pas de doublon',
+      () async {
+        final cubit = await watchingCubit();
+        final sent = await cubit.addComment('Mon commentaire');
+        final ownComment = cubit.state.comments.last;
+
+        commentProvider.emitLive(CommentAdded(ownComment));
+        await deliverLiveEvents();
+
+        expect(sent, isTrue);
+        expect(
+          cubit.state.comments.where((comment) => comment.id == ownComment.id),
+          hasLength(1),
+        );
+        expect(cubit.state.comments, hasLength(storedComments.length + 1));
+        expect(cubit.state.post?.commentsCount, freshPost.commentsCount + 1);
+      },
+    );
+
+    test(
+      'l’événement reçu avant la réponse de l’envoi ne crée pas de doublon',
+      () async {
+        final cubit = await watchingCubit();
+        final serverAnswer = Completer<Comment>();
+        commentProvider.onCreate = (_, _) => serverAnswer.future;
+        final ownComment = incomingComment('own-1');
+
+        final sending = cubit.addComment('Mon commentaire');
+        commentProvider.emitLive(CommentAdded(ownComment));
+        await deliverLiveEvents();
+        serverAnswer.complete(ownComment);
+
+        expect(await sending, isTrue);
+        expect(
+          cubit.state.comments.where((comment) => comment.id == 'own-1'),
+          hasLength(1),
+        );
+        expect(cubit.state.post?.commentsCount, freshPost.commentsCount + 1);
+        expect(cubit.state.highlightedCommentId, 'own-1');
+      },
+    );
+
+    test('un commentaire d’un autre post est ignoré', () async {
+      final cubit = await watchingCubit();
+
+      commentProvider.emitLive(
+        CommentAdded(incomingComment('live-2', postId: 'autre-post')),
+      );
+      await deliverLiveEvents();
+
+      expect(cubit.state.comments, storedComments);
+      expect(cubit.state.post?.commentsCount, freshPost.commentsCount);
+    });
+
+    test('un commentaire supprimé disparaît et le compteur baisse', () async {
+      final cubit = await watchingCubit();
+
+      commentProvider.emitLive(CommentRemoved(storedComments.first.id));
+      await deliverLiveEvents();
+
+      expect(cubit.state.comments, [storedComments.last]);
+      expect(cubit.state.post?.commentsCount, freshPost.commentsCount - 1);
+    });
+
+    test('la suppression d’un commentaire inconnu ne change rien', () async {
+      final cubit = await watchingCubit();
+
+      commentProvider.emitLive(const CommentRemoved('inconnu'));
+      await deliverLiveEvents();
+
+      expect(cubit.state.comments, storedComments);
+      expect(cubit.state.post?.commentsCount, freshPost.commentsCount);
+    });
+
+    test('la fermeture du cubit coupe l’abonnement', () async {
+      final cubit = buildCubit(initialPost: displayedPost)..watchComments();
+      expect(commentProvider.hasLiveListener, isTrue);
+
+      await cubit.close();
+
+      expect(commentProvider.hasLiveListener, isFalse);
     });
   });
 }

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:blog_app/data/models/comment.dart';
+import 'package:blog_app/data/models/comment_event.dart';
 import 'package:blog_app/data/providers/comment_provider.dart';
 
 Comment sampleComment(int index, {String postId = 'post-1'}) {
@@ -21,6 +24,19 @@ class FakeCommentProvider implements CommentProvider {
   Future<Comment> Function(String postId, String text)? onCreate;
   final List<(String, int)> fetchCalls = [];
   final List<(String, String)> createCalls = [];
+  final List<String> watchCalls = [];
+  final StreamController<CommentEvent> liveEvents =
+      StreamController<CommentEvent>.broadcast();
+
+  bool get hasLiveListener => liveEvents.hasListener;
+
+  void emitLive(CommentEvent event) => liveEvents.add(event);
+
+  @override
+  Stream<CommentEvent> watchForPost(String postId) {
+    watchCalls.add(postId);
+    return liveEvents.stream;
+  }
 
   @override
   Future<List<Comment>> fetchForPost(String postId, {required int limit}) {

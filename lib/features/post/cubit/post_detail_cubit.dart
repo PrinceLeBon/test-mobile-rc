@@ -1,7 +1,12 @@
+import 'dart:async';
+import 'dart:math' as math;
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/constants/validation_rules.dart';
 import '../../../core/error/failure.dart';
+import '../../../data/models/comment.dart';
+import '../../../data/models/comment_event.dart';
 import '../../../data/models/post.dart';
 import '../../../data/repositories/comment_repository.dart';
 import '../../../data/repositories/post_repository.dart';
@@ -27,6 +32,7 @@ class PostDetailCubit extends Cubit<PostDetailState> {
 
   final PostRepository _postRepository;
   final CommentRepository _commentRepository;
+  StreamSubscription<CommentEvent>? _commentEventsSubscription;
 
   Future<void> load() async {
     await Future.wait([_loadPost(), loadComments()]);
@@ -91,18 +97,24 @@ class PostDetailCubit extends Cubit<PostDetailState> {
         return false;
       },
       (comment) {
-        final post = state.post;
+        final stateWithComment = _isDisplayed(comment.id)
+            ? state
+            : _withAddedComment(comment);
         emit(
-          state.copyWith(
+          stateWithComment.copyWith(
             isSendingComment: false,
-            comments: [...state.comments, comment],
             highlightedCommentId: () => comment.id,
-            post: () => post?.copyWith(commentsCount: post.commentsCount + 1),
           ),
         );
         return true;
       },
     );
+  }
+
+  void watchComments() {
+    _commentEventsSubscription ??= _commentRepository
+        .watchForPost(state.postId)
+        .listen(_onCommentEvent);
   }
 
   Future<bool> deletePost() async {
@@ -152,6 +164,60 @@ class PostDetailCubit extends Cubit<PostDetailState> {
           postFailure: () => null,
         ),
       ),
+    );
+  }
+
+  @override
+  Future<void> close() async {
+    await _commentEventsSubscription?.cancel();
+    _commentEventsSubscription = null;
+    return super.close();
+  }
+
+  void _onCommentEvent(CommentEvent event) {
+    switch (event) {
+      case CommentAdded(:final comment):
+        _addIncomingComment(comment);
+      case CommentRemoved(:final commentId):
+        _removeComment(commentId);
+    }
+  }
+
+  void _addIncomingComment(Comment comment) {
+    if (comment.postId != state.postId || _isDisplayed(comment.id)) {
+      return;
+    }
+    emit(_withAddedComment(comment));
+  }
+
+  void _removeComment(String commentId) {
+    if (!_isDisplayed(commentId)) {
+      return;
+    }
+    final post = state.post;
+    emit(
+      state.copyWith(
+        comments: state.comments
+            .where((comment) => comment.id != commentId)
+            .toList(),
+        post: () =>
+            post?.copyWith(commentsCount: math.max(0, post.commentsCount - 1)),
+        highlightedCommentId: state.highlightedCommentId == commentId
+            ? () => null
+            : null,
+      ),
+    );
+  }
+
+  bool _isDisplayed(String commentId) {
+    return state.comments.any((comment) => comment.id == commentId);
+  }
+
+  PostDetailState _withAddedComment(Comment comment) {
+    final post = state.post;
+    return state.copyWith(
+      comments: [...state.comments, comment],
+      post: () => post?.copyWith(commentsCount: post.commentsCount + 1),
     );
   }
 }

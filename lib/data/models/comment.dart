@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 abstract final class CommentFields {
   static const String className = 'Comment';
+  static const String objectId = 'objectId';
   static const String post = 'post';
   static const String author = 'author';
   static const String text = 'text';
