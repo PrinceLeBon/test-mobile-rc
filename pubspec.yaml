@@ -1,5 +1,5 @@
 name: blog_app
-description: "A new Flutter project."
+description: "Application mobile de blog reliée à un serveur Parse."
 publish_to: 'none'
 version: 0.1.0+1
 
@@ -7,8 +7,16 @@ environment:
   sdk: ^3.11.1
 
 dependencies:
+  dartz: ^0.10.1
+  equatable: ^3.0.0
   flutter:
     sdk: flutter
+  flutter_bloc: ^9.1.1
+  flutter_localizations:
+    sdk: flutter
+  go_router: ^17.5.0
+  intl: ^0.20.2
+  parse_server_sdk_flutter: ^10.7.0
 
 dev_dependencies:
   flutter_test:

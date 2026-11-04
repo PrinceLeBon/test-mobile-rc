@@ -1,20 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
-  runApp(const MainApp());
-}
+import 'app.dart';
+import 'core/config/parse_config.dart';
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
-    );
-  }
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting(BlogApp.locale.toString());
+  await ParseConfig.initialize();
+  runApp(const BlogApp());
 }
