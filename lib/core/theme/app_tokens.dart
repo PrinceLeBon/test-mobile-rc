@@ -62,6 +62,7 @@ abstract final class AppSizes {
   static const double authGradientHeight = 320;
   static const double sheetHandleWidth = 36;
   static const double sheetHandleHeight = 4;
+  static const double sheetTileHeight = 56;
   static const double avatarComment = 32;
   static const double avatarAppBar = 36;
   static const double avatarCard = 40;
