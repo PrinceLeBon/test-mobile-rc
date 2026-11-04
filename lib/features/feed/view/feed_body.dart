@@ -15,6 +15,7 @@ import '../../../shared/widgets/status_view.dart';
 import '../../auth/cubit/auth_cubit.dart';
 import '../../auth/cubit/auth_state.dart';
 import '../../auth/view/auth_navigation.dart';
+import '../../likes/cubit/likes_cubit.dart';
 import '../cubit/feed_cubit.dart';
 import '../cubit/feed_state.dart';
 import 'post_card.dart';
@@ -51,6 +52,20 @@ class FeedBody extends StatelessWidget {
           listenWhen: (previous, current) =>
               !previous.hasSessionFailure && current.hasSessionFailure,
           listener: (context, _) => context.read<AuthCubit>().sessionExpired(),
+        ),
+        BlocListener<FeedCubit, FeedState>(
+          listenWhen: (previous, current) => previous.posts != current.posts,
+          listener: (context, state) =>
+              context.read<LikesCubit>().registerPosts(state.posts),
+        ),
+        BlocListener<FeedCubit, FeedState>(
+          listenWhen: (previous, current) =>
+              previous.isRefreshing &&
+              !current.isRefreshing &&
+              current.refreshFailure == null,
+          listener: (context, state) => context
+              .read<LikesCubit>()
+              .registerPosts(state.posts, reloadPersonalLikes: true),
         ),
       ],
       child: BlocBuilder<FeedCubit, FeedState>(
