@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:blog_app/app.dart';
 import 'package:blog_app/data/models/app_user.dart';
 import 'package:blog_app/data/repositories/auth_repository.dart';
+import 'package:blog_app/data/repositories/post_repository.dart';
 import 'package:blog_app/features/auth/view/login_page.dart';
 import 'package:blog_app/features/auth/view/register_page.dart';
 import 'package:blog_app/features/feed/view/feed_page.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 import '../../../helpers/fake_auth_provider.dart';
+import '../../../helpers/fake_post_provider.dart';
 
 void main() {
   late FakeAuthProvider provider;
@@ -25,7 +27,12 @@ void main() {
       ..physicalSize = const Size(1170, 2532)
       ..devicePixelRatio = 3;
     addTearDown(tester.view.reset);
-    await tester.pumpWidget(BlogApp(authRepository: AuthRepository(provider)));
+    await tester.pumpWidget(
+      BlogApp(
+        authRepository: AuthRepository(provider),
+        postRepository: PostRepository(FakePostProvider(posts: samplePosts(3))),
+      ),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.text('Se connecter'));
     await tester.pumpAndSettle();
@@ -124,7 +131,10 @@ void main() {
 
     expect(find.text('alice@example.com'), findsOneWidget);
     expect(
-      find.text('Testé sur iOS · simulateur iPhone 17 Pro'),
+      find.descendant(
+        of: find.byType(BottomSheet),
+        matching: find.text('Testé sur iOS · simulateur iPhone 17 Pro'),
+      ),
       findsOneWidget,
     );
 

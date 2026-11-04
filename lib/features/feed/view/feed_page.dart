@@ -10,6 +10,8 @@ import '../../auth/cubit/auth_cubit.dart';
 import '../../auth/cubit/auth_state.dart';
 import '../../auth/view/account_sheet.dart';
 import '../../auth/view/auth_navigation.dart';
+import 'feed_body.dart';
+import 'write_post_button.dart';
 
 class FeedPage extends StatelessWidget {
   const FeedPage({super.key});
@@ -42,7 +44,8 @@ class FeedPage extends StatelessWidget {
           ),
         ],
       ),
-      body: const SizedBox.shrink(),
+      body: const FeedBody(),
+      floatingActionButton: const WritePostButton(),
     );
   }
 }
