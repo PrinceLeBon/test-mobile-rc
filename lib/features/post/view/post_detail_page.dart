@@ -118,6 +118,10 @@ class _PostDetailViewState extends State<PostDetailView> {
                     duration: AppDurations.stateSwitch,
                     switchInCurve: AppCurves.stateSwitch,
                     switchOutCurve: AppCurves.stateSwitch,
+                    layoutBuilder: (currentChild, previousChildren) => Stack(
+                      fit: StackFit.expand,
+                      children: [...previousChildren, ?currentChild],
+                    ),
                     child: _PostDetailBody(
                       key: ValueKey(_bodyKeyFor(state)),
                       state: state,
