@@ -28,4 +28,26 @@ class PostProvider {
     }
     return Post.fromParseObject(result);
   }
+
+  Future<Post> create({required String title, required String body}) async {
+    final object = ParseObject(PostFields.className)
+      ..set(PostFields.title, title)
+      ..set(PostFields.body, body);
+
+    final response = await object.save();
+    final postId = object.objectId;
+    if (!response.success || postId == null) {
+      throw response.error ?? ParseError();
+    }
+    return fetchById(postId);
+  }
+
+  Future<void> delete(String postId) async {
+    final response = await (ParseObject(
+      PostFields.className,
+    )..objectId = postId).delete();
+    if (!response.success) {
+      throw response.error ?? ParseError();
+    }
+  }
 }

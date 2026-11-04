@@ -20,6 +20,20 @@ class PostRepository {
     return _run(() => _provider.fetchById(postId));
   }
 
+  Future<Either<Failure, Post>> create({
+    required String title,
+    required String body,
+  }) {
+    return _run(() => _provider.create(title: title, body: body));
+  }
+
+  Future<Either<Failure, String>> delete(String postId) {
+    return _run(() async {
+      await _provider.delete(postId);
+      return postId;
+    });
+  }
+
   Future<Either<Failure, T>> _run<T>(Future<T> Function() action) async {
     try {
       return Right(await action());

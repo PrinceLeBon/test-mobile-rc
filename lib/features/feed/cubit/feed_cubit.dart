@@ -99,6 +99,28 @@ class FeedCubit extends Cubit<FeedState> {
     emit(state.copyWith(posts: posts));
   }
 
+  void insertPost(Post post) {
+    final others = state.posts.where((known) => known.id != post.id);
+    emit(
+      state.copyWith(
+        status: FeedStatus.success,
+        posts: [post, ...others],
+        failure: () => null,
+      ),
+    );
+  }
+
+  void removePost(String postId) {
+    if (!state.posts.any((known) => known.id == postId)) {
+      return;
+    }
+    emit(
+      state.copyWith(
+        posts: state.posts.where((known) => known.id != postId).toList(),
+      ),
+    );
+  }
+
   FeedState _firstPageState(List<Post> page) {
     return FeedState(
       status: FeedStatus.success,
