@@ -15,6 +15,8 @@ class AppTextField extends StatelessWidget {
     this.prefixIcon,
     this.suffix,
     this.obscureText = false,
+    this.readOnly = false,
+    this.autocorrect = true,
     this.keyboardType,
     this.textInputAction,
     this.autofillHints,
@@ -33,6 +35,8 @@ class AppTextField extends StatelessWidget {
   final IconData? prefixIcon;
   final Widget? suffix;
   final bool obscureText;
+  final bool readOnly;
+  final bool autocorrect;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final Iterable<String>? autofillHints;
@@ -54,6 +58,9 @@ class AppTextField extends StatelessWidget {
         TextField(
           controller: controller,
           obscureText: obscureText,
+          readOnly: readOnly,
+          autocorrect: autocorrect,
+          enableSuggestions: autocorrect,
           keyboardType: keyboardType,
           textInputAction: textInputAction,
           autofillHints: autofillHints,
