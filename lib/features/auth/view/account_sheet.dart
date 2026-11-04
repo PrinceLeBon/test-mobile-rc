@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../data/models/app_user.dart';
-import '../../../shared/widgets/platform_tag.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../cubit/auth_cubit.dart';
 
@@ -107,8 +106,6 @@ class AccountSheet extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
-            const Center(child: PlatformTag()),
           ],
         ),
       ),

@@ -9,7 +9,6 @@ import '../../../core/theme/app_tokens.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/app_tonal_button.dart';
 import '../../../shared/widgets/appear_animation.dart';
-import '../../../shared/widgets/platform_tag.dart';
 import '../../../shared/widgets/post_card_skeleton.dart';
 import '../../../shared/widgets/status_view.dart';
 import '../../auth/cubit/auth_cubit.dart';
@@ -259,13 +258,7 @@ class FeedFooter extends StatelessWidget {
     if (state.hasReachedEnd) {
       return Padding(
         padding: const EdgeInsets.only(top: AppSpacing.lg),
-        child: Column(
-          children: [
-            Text(FeedTexts.endOfFeed, style: mutedStyle),
-            const SizedBox(height: AppSpacing.xxs),
-            const PlatformTag(),
-          ],
-        ),
+        child: Text(FeedTexts.endOfFeed, style: mutedStyle),
       );
     }
     return SizedBox(

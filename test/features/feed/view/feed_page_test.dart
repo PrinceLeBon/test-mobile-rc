@@ -8,7 +8,6 @@ import 'package:blog_app/features/feed/view/post_card.dart';
 import 'package:blog_app/features/feed/view/write_post_button.dart';
 import 'package:blog_app/features/post/view/post_detail_page.dart';
 import 'package:blog_app/features/post/view/post_detail_texts.dart';
-import 'package:blog_app/shared/widgets/platform_tag.dart';
 import 'package:blog_app/shared/widgets/post_stat_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -80,16 +79,12 @@ void main() {
     );
   });
 
-  testWidgets(
-    'une liste courte se termine par la fin du fil et la plateforme',
-    (tester) async {
-      await pumpFeed(tester, postIndexes: [1, 2]);
+  testWidgets('une liste courte se termine par la fin du fil', (tester) async {
+    await pumpFeed(tester, postIndexes: [1, 2]);
 
-      expect(find.byType(PostCard), findsNWidgets(2));
-      expect(find.text(FeedTexts.endOfFeed), findsOneWidget);
-      expect(find.byType(PlatformTag), findsOneWidget);
-    },
-  );
+    expect(find.byType(PostCard), findsNWidgets(2));
+    expect(find.text(FeedTexts.endOfFeed), findsOneWidget);
+  });
 
   testWidgets('le fil vide invite le visiteur à se connecter', (tester) async {
     await pumpFeed(tester);

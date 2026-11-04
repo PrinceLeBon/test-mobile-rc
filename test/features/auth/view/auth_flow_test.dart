@@ -130,13 +130,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('alice@example.com'), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byType(BottomSheet),
-        matching: find.text('Testé sur iOS · simulateur iPhone 17 Pro'),
-      ),
-      findsOneWidget,
-    );
 
     await tester.tap(find.text('Se déconnecter'));
     await tester.pumpAndSettle();
