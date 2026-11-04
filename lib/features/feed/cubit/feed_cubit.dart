@@ -90,6 +90,15 @@ class FeedCubit extends Cubit<FeedState> {
     await loadMore();
   }
 
+  void replacePost(Post post) {
+    final index = state.posts.indexWhere((known) => known.id == post.id);
+    if (index == -1 || state.posts[index] == post) {
+      return;
+    }
+    final posts = List<Post>.of(state.posts)..[index] = post;
+    emit(state.copyWith(posts: posts));
+  }
+
   FeedState _firstPageState(List<Post> page) {
     return FeedState(
       status: FeedStatus.success,
