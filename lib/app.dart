@@ -6,20 +6,28 @@ import 'package:go_router/go_router.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'data/providers/auth_provider.dart';
+import 'data/providers/comment_provider.dart';
 import 'data/providers/post_provider.dart';
 import 'data/repositories/auth_repository.dart';
+import 'data/repositories/comment_repository.dart';
 import 'data/repositories/post_repository.dart';
 import 'features/auth/cubit/auth_cubit.dart';
 import 'features/feed/cubit/feed_cubit.dart';
 
 class BlogApp extends StatefulWidget {
-  const BlogApp({super.key, this.authRepository, this.postRepository});
+  const BlogApp({
+    super.key,
+    this.authRepository,
+    this.postRepository,
+    this.commentRepository,
+  });
 
   static const String title = 'Blog';
   static const Locale locale = Locale('fr', 'FR');
 
   final AuthRepository? authRepository;
   final PostRepository? postRepository;
+  final CommentRepository? commentRepository;
 
   @override
   State<BlogApp> createState() => _BlogAppState();
@@ -45,6 +53,10 @@ class _BlogAppState extends State<BlogApp> {
         RepositoryProvider<PostRepository>(
           create: (_) =>
               widget.postRepository ?? PostRepository(PostProvider()),
+        ),
+        RepositoryProvider<CommentRepository>(
+          create: (_) =>
+              widget.commentRepository ?? CommentRepository(CommentProvider()),
         ),
       ],
       child: MultiBlocProvider(

@@ -8,4 +8,9 @@ abstract final class ValidationRules {
   static const int commentCounterThreshold = 400;
   static const int signUpPasswordMinLength = 8;
   static final RegExp emailPattern = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+
+  static bool isCommentValid(String rawText) {
+    final length = rawText.trim().length;
+    return length >= commentMinLength && length <= commentMaxLength;
+  }
 }

@@ -16,6 +16,10 @@ class PostRepository {
     return _run(() => _provider.fetchPage(skip: skip, limit: pageSize));
   }
 
+  Future<Either<Failure, Post>> fetchById(String postId) {
+    return _run(() => _provider.fetchById(postId));
+  }
+
   Future<Either<Failure, T>> _run<T>(Future<T> Function() action) async {
     try {
       return Right(await action());

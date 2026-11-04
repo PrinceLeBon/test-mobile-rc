@@ -1,5 +1,6 @@
 import 'package:blog_app/data/models/post.dart';
 import 'package:blog_app/data/providers/post_provider.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 Post samplePost(int index) {
   return Post(
@@ -29,6 +30,8 @@ class FakePostProvider implements PostProvider {
   List<Post> posts;
   Future<List<Post>> Function(int skip, int limit)? onFetchPage;
   final List<(int, int)> fetchPageCalls = [];
+  Future<Post> Function(String postId)? onFetchById;
+  final List<String> fetchByIdCalls = [];
 
   @override
   Future<List<Post>> fetchPage({required int skip, required int limit}) {
@@ -38,5 +41,20 @@ class FakePostProvider implements PostProvider {
       return handler(skip, limit);
     }
     return Future.value(posts.skip(skip).take(limit).toList());
+  }
+
+  @override
+  Future<Post> fetchById(String postId) {
+    fetchByIdCalls.add(postId);
+    final handler = onFetchById;
+    if (handler != null) {
+      return handler(postId);
+    }
+    for (final post in posts) {
+      if (post.id == postId) {
+        return Future.value(post);
+      }
+    }
+    return Future.error(ParseError(code: ParseError.objectNotFound));
   }
 }

@@ -17,4 +17,15 @@ class PostProvider {
     final results = response.results ?? const <dynamic>[];
     return results.whereType<ParseObject>().map(Post.fromParseObject).toList();
   }
+
+  Future<Post> fetchById(String postId) async {
+    final response = await ParseObject(
+      PostFields.className,
+    ).getObject(postId, include: [PostFields.author]);
+    final result = response.result;
+    if (!response.success || result is! ParseObject) {
+      throw response.error ?? ParseError(code: ParseError.objectNotFound);
+    }
+    return Post.fromParseObject(result);
+  }
 }
