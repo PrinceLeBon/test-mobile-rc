@@ -30,7 +30,7 @@ La consigne demandait React Native avec Expo et le SDK JavaScript de Parse. Je s
 
    C'est l'équivalent de `npm install && npx expo start` demandé dans la consigne.
 
-**Plateforme testée : simulateur iPhone 17 Pro, iOS 26.2.**
+**Plateformes testées : simulateur iPhone 17 Pro (iOS 26.2) et téléphone Android physique (Samsung A17, branché en USB).**
 
 ## Adresse du serveur
 
@@ -65,7 +65,7 @@ Le même fichier initialise le SDK : adresse `http://<hôte>:1337/parse`, adress
 | F4 | Écriture | Fait : création si connecté avec la même validation que le serveur (titre 3 à 120, contenu 1 à 5000, texte nettoyé). Suppression par l'auteur avec boîte de confirmation. |
 | F5 | Commentaire | Fait : champ toujours visible au-dessus du clavier, commentaire ajouté sans recharger l'écran, compteur mis à jour. |
 | F6 | Like | Fait : bouton sur le fil et le détail, état « j'ai liké » chargé par une requête `Like` pour l'utilisateur courant et les articles affichés. Un visiteur est renvoyé vers la connexion. |
-| F7 | Bases de l'expérience | Fait : états chargement, vide et erreur, boutons désactivés pendant les requêtes, plateforme testée indiquée dans l'application. |
+| F7 | Bases de l'expérience | Fait : états chargement, vide et erreur, boutons désactivés pendant les requêtes, plateformes testées indiquées dans ce README. |
 
 | Bonus | État |
 |---|---|
