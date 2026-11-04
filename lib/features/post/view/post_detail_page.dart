@@ -11,6 +11,7 @@ import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/status_view.dart';
 import '../../auth/cubit/auth_cubit.dart';
 import '../../feed/cubit/feed_cubit.dart';
+import '../../likes/cubit/likes_cubit.dart';
 import '../cubit/post_detail_cubit.dart';
 import '../cubit/post_detail_state.dart';
 import 'comment_input_bar.dart';
@@ -28,12 +29,20 @@ class PostDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PostDetailCubit>(
-      create: (context) => PostDetailCubit(
-        postRepository: context.read<PostRepository>(),
-        commentRepository: context.read<CommentRepository>(),
-        postId: postId,
-        initialPost: initialPost,
-      )..load(),
+      create: (context) {
+        final post = initialPost;
+        if (post != null) {
+          context.read<LikesCubit>().registerPosts([
+            post,
+          ], reloadPersonalLikes: true);
+        }
+        return PostDetailCubit(
+          postRepository: context.read<PostRepository>(),
+          commentRepository: context.read<CommentRepository>(),
+          postId: postId,
+          initialPost: initialPost,
+        )..load();
+      },
       child: const PostDetailView(),
     );
   }
@@ -79,6 +88,7 @@ class _PostDetailViewState extends State<PostDetailView> {
             final post = state.post;
             if (post != null) {
               context.read<FeedCubit>().replacePost(post);
+              context.read<LikesCubit>().registerPosts([post]);
             }
           },
         ),

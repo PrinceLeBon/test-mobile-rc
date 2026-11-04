@@ -7,23 +7,16 @@ import '../../../data/models/post.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/post_stat_chip.dart';
 import '../../../shared/widgets/user_avatar.dart';
+import '../../likes/view/post_like_button.dart';
 
 class PostCard extends StatelessWidget {
-  const PostCard({
-    super.key,
-    required this.post,
-    required this.onTap,
-    this.isLiked = false,
-    this.onLikePressed,
-  });
+  const PostCard({super.key, required this.post, required this.onTap});
 
   static const int titleMaxLines = 2;
   static const int excerptMaxLines = 3;
 
   final Post post;
   final VoidCallback onTap;
-  final bool isLiked;
-  final VoidCallback? onLikePressed;
 
   @override
   Widget build(BuildContext context) {
@@ -52,11 +45,7 @@ class PostCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Row(
             children: [
-              LikeChip(
-                count: post.likesCount,
-                isLiked: isLiked,
-                onPressed: onLikePressed,
-              ),
+              PostLikeButton(post: post),
               const SizedBox(width: AppSpacing.xs),
               CommentCountChip(count: post.commentsCount),
             ],

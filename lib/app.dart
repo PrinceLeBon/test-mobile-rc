@@ -7,12 +7,16 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'data/providers/auth_provider.dart';
 import 'data/providers/comment_provider.dart';
+import 'data/providers/like_provider.dart';
 import 'data/providers/post_provider.dart';
 import 'data/repositories/auth_repository.dart';
 import 'data/repositories/comment_repository.dart';
+import 'data/repositories/like_repository.dart';
 import 'data/repositories/post_repository.dart';
 import 'features/auth/cubit/auth_cubit.dart';
 import 'features/feed/cubit/feed_cubit.dart';
+import 'features/likes/cubit/likes_cubit.dart';
+import 'features/likes/view/likes_sync.dart';
 
 class BlogApp extends StatefulWidget {
   const BlogApp({
@@ -20,6 +24,7 @@ class BlogApp extends StatefulWidget {
     this.authRepository,
     this.postRepository,
     this.commentRepository,
+    this.likeRepository,
   });
 
   static const String title = 'Blog';
@@ -28,6 +33,7 @@ class BlogApp extends StatefulWidget {
   final AuthRepository? authRepository;
   final PostRepository? postRepository;
   final CommentRepository? commentRepository;
+  final LikeRepository? likeRepository;
 
   @override
   State<BlogApp> createState() => _BlogAppState();
@@ -58,6 +64,10 @@ class _BlogAppState extends State<BlogApp> {
           create: (_) =>
               widget.commentRepository ?? CommentRepository(CommentProvider()),
         ),
+        RepositoryProvider<LikeRepository>(
+          create: (_) =>
+              widget.likeRepository ?? LikeRepository(LikeProvider()),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -69,6 +79,9 @@ class _BlogAppState extends State<BlogApp> {
             create: (context) =>
                 FeedCubit(context.read<PostRepository>())..loadInitial(),
           ),
+          BlocProvider<LikesCubit>(
+            create: (context) => LikesCubit(context.read<LikeRepository>()),
+          ),
         ],
         child: MaterialApp.router(
           title: BlogApp.title,
@@ -78,6 +91,7 @@ class _BlogAppState extends State<BlogApp> {
           supportedLocales: const [BlogApp.locale],
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
           routerConfig: _router,
+          builder: (_, child) => LikesSync(child: child ?? const SizedBox()),
         ),
       ),
     );
