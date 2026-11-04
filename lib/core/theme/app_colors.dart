@@ -81,15 +81,24 @@ class AppColors extends ThemeExtension<AppColors> {
       liked: Color.lerp(liked, other.liked, t)!,
       likedContainer: Color.lerp(likedContainer, other.likedContainer, t)!,
       skeletonBase: Color.lerp(skeletonBase, other.skeletonBase, t)!,
-      skeletonHighlight: Color.lerp(skeletonHighlight, other.skeletonHighlight, t)!,
-      snackBarErrorIcon: Color.lerp(snackBarErrorIcon, other.snackBarErrorIcon, t)!,
+      skeletonHighlight: Color.lerp(
+        skeletonHighlight,
+        other.skeletonHighlight,
+        t,
+      )!,
+      snackBarErrorIcon: Color.lerp(
+        snackBarErrorIcon,
+        other.snackBarErrorIcon,
+        t,
+      )!,
       avatars: t < 0.5 ? avatars : other.avatars,
     );
   }
 }
 
 extension AppThemeContext on BuildContext {
-  AppColors get appColors => Theme.of(this).extension<AppColors>() ?? AppColors.light;
+  AppColors get appColors =>
+      Theme.of(this).extension<AppColors>() ?? AppColors.light;
 
   ColorScheme get colorScheme => Theme.of(this).colorScheme;
 

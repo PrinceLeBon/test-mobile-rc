@@ -73,7 +73,10 @@ class AppTextField extends StatelessWidget {
             suffixIcon: suffix,
             counter: limit == null
                 ? null
-                : TrimmedLengthCounter(controller: controller, maxLength: limit),
+                : TrimmedLengthCounter(
+                    controller: controller,
+                    maxLength: limit,
+                  ),
           ),
         ),
       ],

@@ -71,17 +71,37 @@ abstract final class AppSizes {
 
 abstract final class AppShadows {
   static const List<BoxShadow> card = [
-    BoxShadow(color: AppPalette.cardShadowNear, offset: Offset(0, 1), blurRadius: 2),
-    BoxShadow(color: AppPalette.cardShadowFar, offset: Offset(0, 6), blurRadius: 20),
+    BoxShadow(
+      color: AppPalette.cardShadowNear,
+      offset: Offset(0, 1),
+      blurRadius: 2,
+    ),
+    BoxShadow(
+      color: AppPalette.cardShadowFar,
+      offset: Offset(0, 6),
+      blurRadius: 20,
+    ),
   ];
   static const List<BoxShadow> fab = [
-    BoxShadow(color: AppPalette.fabShadow, offset: Offset(0, 8), blurRadius: 24),
+    BoxShadow(
+      color: AppPalette.fabShadow,
+      offset: Offset(0, 8),
+      blurRadius: 24,
+    ),
   ];
   static const List<BoxShadow> commentBar = [
-    BoxShadow(color: AppPalette.commentBarShadow, offset: Offset(0, -4), blurRadius: 16),
+    BoxShadow(
+      color: AppPalette.commentBarShadow,
+      offset: Offset(0, -4),
+      blurRadius: 16,
+    ),
   ];
   static const List<BoxShadow> dialog = [
-    BoxShadow(color: AppPalette.dialogShadow, offset: Offset(0, 16), blurRadius: 48),
+    BoxShadow(
+      color: AppPalette.dialogShadow,
+      offset: Offset(0, 16),
+      blurRadius: 48,
+    ),
   ];
 }
 
