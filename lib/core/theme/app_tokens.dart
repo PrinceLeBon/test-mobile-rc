@@ -68,6 +68,9 @@ abstract final class AppSizes {
   static const double avatarCard = 40;
   static const double avatarDetail = 44;
   static const double avatarSheet = 56;
+  static const double dialogIconCircle = 48;
+  static const double dialogIcon = 24;
+  static const int postBodyMinLines = 8;
 }
 
 abstract final class AppShadows {
