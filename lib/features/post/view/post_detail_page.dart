@@ -15,6 +15,7 @@ import '../cubit/post_detail_cubit.dart';
 import '../cubit/post_detail_state.dart';
 import 'comment_input_bar.dart';
 import 'comments_section.dart';
+import 'delete_post_action.dart';
 import 'post_detail_header.dart';
 import 'post_detail_texts.dart';
 
@@ -94,6 +95,17 @@ class _PostDetailViewState extends State<PostDetailView> {
         ),
         BlocListener<PostDetailCubit, PostDetailState>(
           listenWhen: (previous, current) =>
+              current.deleteFailure != null &&
+              previous.deleteFailure != current.deleteFailure,
+          listener: (context, state) {
+            final failure = state.deleteFailure;
+            if (failure != null) {
+              context.showErrorSnackBar(failure.message);
+            }
+          },
+        ),
+        BlocListener<PostDetailCubit, PostDetailState>(
+          listenWhen: (previous, current) =>
               !previous.hasSessionFailure && current.hasSessionFailure,
           listener: (context, _) => context.read<AuthCubit>().sessionExpired(),
         ),
@@ -107,7 +119,10 @@ class _PostDetailViewState extends State<PostDetailView> {
       child: Scaffold(
         backgroundColor: context.colorScheme.surface,
         resizeToAvoidBottomInset: true,
-        appBar: AppBar(title: const Text(PostDetailTexts.title)),
+        appBar: AppBar(
+          title: const Text(PostDetailTexts.title),
+          actions: const [DeletePostAction()],
+        ),
         body: BlocBuilder<PostDetailCubit, PostDetailState>(
           builder: (context, state) {
             final hasPost = state.post != null;

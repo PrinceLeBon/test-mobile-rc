@@ -32,6 +32,10 @@ class FakePostProvider implements PostProvider {
   final List<(int, int)> fetchPageCalls = [];
   Future<Post> Function(String postId)? onFetchById;
   final List<String> fetchByIdCalls = [];
+  Future<Post> Function(String title, String body)? onCreate;
+  final List<(String, String)> createCalls = [];
+  Future<void> Function(String postId)? onDelete;
+  final List<String> deleteCalls = [];
 
   @override
   Future<List<Post>> fetchPage({required int skip, required int limit}) {
@@ -56,5 +60,35 @@ class FakePostProvider implements PostProvider {
       }
     }
     return Future.error(ParseError(code: ParseError.objectNotFound));
+  }
+
+  @override
+  Future<Post> create({required String title, required String body}) {
+    createCalls.add((title, body));
+    final handler = onCreate;
+    if (handler != null) {
+      return handler(title, body);
+    }
+    final post = Post(
+      id: 'created-${createCalls.length}',
+      title: title,
+      body: body,
+      authorId: 'u1',
+      authorName: 'alice',
+      createdAt: DateTime.utc(2026, 11, 4, 1),
+    );
+    posts = [post, ...posts];
+    return Future.value(post);
+  }
+
+  @override
+  Future<void> delete(String postId) {
+    deleteCalls.add(postId);
+    final handler = onDelete;
+    if (handler != null) {
+      return handler(postId);
+    }
+    posts = posts.where((post) => post.id != postId).toList();
+    return Future.value();
   }
 }

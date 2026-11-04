@@ -20,6 +20,8 @@ class PostDetailState extends Equatable {
     this.isSendingComment = false,
     this.sendFailure,
     this.highlightedCommentId,
+    this.isDeleting = false,
+    this.deleteFailure,
   });
 
   final String postId;
@@ -32,11 +34,14 @@ class PostDetailState extends Equatable {
   final bool isSendingComment;
   final Failure? sendFailure;
   final String? highlightedCommentId;
+  final bool isDeleting;
+  final Failure? deleteFailure;
 
   bool get hasSessionFailure =>
       postFailure is SessionFailure ||
       commentsFailure is SessionFailure ||
-      sendFailure is SessionFailure;
+      sendFailure is SessionFailure ||
+      deleteFailure is SessionFailure;
 
   PostDetailState copyWith({
     Post? Function()? post,
@@ -48,6 +53,8 @@ class PostDetailState extends Equatable {
     bool? isSendingComment,
     Failure? Function()? sendFailure,
     String? Function()? highlightedCommentId,
+    bool? isDeleting,
+    Failure? Function()? deleteFailure,
   }) {
     return PostDetailState(
       postId: postId,
@@ -64,6 +71,10 @@ class PostDetailState extends Equatable {
       highlightedCommentId: highlightedCommentId == null
           ? this.highlightedCommentId
           : highlightedCommentId(),
+      isDeleting: isDeleting ?? this.isDeleting,
+      deleteFailure: deleteFailure == null
+          ? this.deleteFailure
+          : deleteFailure(),
     );
   }
 
@@ -79,5 +90,7 @@ class PostDetailState extends Equatable {
     isSendingComment,
     sendFailure,
     highlightedCommentId,
+    isDeleting,
+    deleteFailure,
   ];
 }

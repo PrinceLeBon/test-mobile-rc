@@ -105,6 +105,27 @@ class PostDetailCubit extends Cubit<PostDetailState> {
     );
   }
 
+  Future<bool> deletePost() async {
+    if (state.isDeleting) {
+      return false;
+    }
+    emit(state.copyWith(isDeleting: true, deleteFailure: () => null));
+    final result = await _postRepository.delete(state.postId);
+    if (isClosed) {
+      return false;
+    }
+    return result.fold(
+      (failure) {
+        emit(state.copyWith(isDeleting: false, deleteFailure: () => failure));
+        return false;
+      },
+      (_) {
+        emit(state.copyWith(isDeleting: false));
+        return true;
+      },
+    );
+  }
+
   Future<void> _loadPost() async {
     final result = await _postRepository.fetchById(state.postId);
     if (isClosed) {

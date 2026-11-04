@@ -24,4 +24,12 @@ extension AppSnackBar on BuildContext {
         ),
       );
   }
+
+  void showInfoSnackBar(String message) {
+    ScaffoldMessenger.of(this)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(duration: AppDurations.snackBar, content: Text(message)),
+      );
+  }
 }
