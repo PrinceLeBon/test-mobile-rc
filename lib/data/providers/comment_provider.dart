@@ -28,7 +28,7 @@ class CommentProvider {
 
   Future<Comment> create({required String postId, required String text}) async {
     final object = ParseObject(CommentFields.className)
-      ..set(CommentFields.post, _postPointer(postId))
+      ..set(CommentFields.post, _postPointer(postId).toPointer())
       ..set(CommentFields.text, text);
 
     final response = await object.save();
